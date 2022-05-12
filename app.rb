@@ -1,16 +1,27 @@
 require 'sinatra'
-require 'sinatra/reloader' 
+require 'sinatra/reloader'
+require 'net/http'
+require 'uri'
+require 'json'
 
-get '/' do
-  'Good day!'
+
+
+get '/' do 
+
+  
+    File.open('db.json') do |f|
+        array = JSON.load(f)
+        array.each do |hash|
+            @hash = hash
+
+        end
+    end
+
+  erb :index
 end
 
-# ここから
-get '/path/to' do
-  "this is [/path/to]"
-end
-# ここまでを追加
 
-get '/hello/*' do |name|
-  "hello #{name}. how are you?"
-end
+
+# get '/newmemo' do 
+#   erb :newmemo
+#   end
