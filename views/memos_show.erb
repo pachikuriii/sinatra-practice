@@ -1,0 +1,6 @@
+<h1><%= @title %></h1>
+<p><%= @content %></p>
+<a href="/memos/edit">変更</a>
+<form method="delete" action="/memos/<%= @id %>">
+  <input type="submit" value="削除">
+</form>
