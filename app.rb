@@ -40,7 +40,7 @@ patch '/memos/:id' do
   hash = {"id": params["id"], "title": params["title"], "content": params["content"] }
   JSON.dump(hash, file)
   end
-  
+
   redirect '/'
 end
 
