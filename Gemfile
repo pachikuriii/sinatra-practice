@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # gem "rails"
 
-gem "sinatra"
-gem "webrick"
-gem "debug"
-gem "sinatra-contrib"
-gem "rubocop"
+gem 'debug'
+gem 'rubocop'
+gem 'sinatra'
+gem 'sinatra-contrib'
+gem 'webrick'
 group :development do
   gem 'rubocop-fjord', require: false
 end
