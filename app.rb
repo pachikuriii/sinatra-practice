@@ -48,4 +48,3 @@ delete '/memos/:id' do
   File.delete("memos/#{params['id']}.json")
   redirect '/'
 end
-
