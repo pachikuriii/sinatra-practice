@@ -7,12 +7,12 @@ require 'cgi'
 require 'pg'
 
 def connection
-  connection = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: 'saya5626')
+  connection = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: 'pass')
 end
 
 get '/' do
   connection
-  @memos = connection.exec('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }
+  @memos = connection.exec('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }.reverse
   erb :index
 end
 
@@ -40,27 +40,24 @@ end
 
 get '/memos/:id/edit' do
   connection
-
   connection.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
     result.each do |row|
       @title = (row['memo_title']).to_s
       @content = (row['memo_content']).to_s
     end
   end
-
   erb :memos_edit
 end
 
 patch '/memos/:id' do
-  File.open("memos/#{params['id']}.json", 'w') do |file|
-    hash = { "id": params['id'], "title": CGI.escapeHTML(params['title']), "content": CGI.escapeHTML(params['content']) }
-    JSON.dump(hash, file)
-  end
+  connection
+  connection.exec("UPDATE Memo SET memo_title = '#{params['title']}', memo_content = '#{params['content']}' WHERE memo_id = '#{params[:id]}'")
   redirect "/memos/#{params['id']}"
 end
 
 delete '/memos/:id' do
-  File.delete("memos/#{params['id']}.json")
+  connection
+  connection.exec("DELETE FROM Memo WHERE memo_id = '#{params[:id]}'")
   redirect '/'
 end
 
