@@ -4,12 +4,24 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
 require 'cgi'
+<<<<<<< HEAD
 
 get '/' do
   files = Dir.glob('memos/*').sort_by { |file| File.mtime(file) }.reverse
   @memos = files.map do |file|
     JSON.parse(File.read(file))
   end
+=======
+require 'pg'
+
+def connection
+  connection = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: 'pass')
+end
+
+get '/' do
+  connection
+  @memos = connection.exec('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }.reverse
+>>>>>>> 361f52c (app.rbを作成)
   erb :index
 end
 
@@ -31,23 +43,27 @@ get '/memos/:id' do
 end
 
 get '/memos/:id/edit' do
-  file = JSON.parse(File.read("memos/#{params['id']}.json"))
-  @title = file['title']
-  @content = file['content']
+
+  connection
+  connection.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
+    result.each do |row|
+      @title = (row['memo_title']).to_s
+      @content = (row['memo_content']).to_s
+    end
+  end
 
   erb :memos_edit
 end
 
 patch '/memos/:id' do
-  File.open("memos/#{params['id']}.json", 'w') do |file|
-    hash = { "id": params['id'], "title": CGI.escapeHTML(params['title']), "content": CGI.escapeHTML(params['content']) }
-    JSON.dump(hash, file)
-  end
+  connection
+  connection.exec("UPDATE Memo SET memo_title = '#{params['title']}', memo_content = '#{params['content']}' WHERE memo_id = '#{params[:id]}'")
   redirect "/memos/#{params['id']}"
 end
 
 delete '/memos/:id' do
-  File.delete("memos/#{params['id']}.json")
+  connection
+  connection.exec("DELETE FROM Memo WHERE memo_id = '#{params[:id]}'")
   redirect '/'
 end
 
