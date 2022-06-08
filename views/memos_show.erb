@@ -1,5 +1,5 @@
-<h1><%= @title %></h1>
-<p><%= @content %></p>
+<h1><%= CGI.escapeHTML(@title) %></h1>
+<p><%= CGI.escapeHTML(@content) %></p>
 <div class="buttons-wrapper">
   <a href="/memos/<%= params["id"] %>/edit" class="button">変更</a>
   <form method="post" action="/memos/<%= params["id"] %>">
