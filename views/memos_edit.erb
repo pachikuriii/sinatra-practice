@@ -1,0 +1,7 @@
+ <form method="post" action="/memos/<%= params["id"] %>">
+   <input type="hidden" name="_method" value="patch">
+
+   <input type="text" name="title" value="<%= @title %>" required maxlength="20" class="title">
+   <textarea type="text" name="content" required maxlength="200" class="content"><%= @content %></textarea>
+   <input type="submit" value="変更" class="button">
+ </form>

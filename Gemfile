@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 
 gem 'cgi'
 gem 'json'
+gem 'pg'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'webrick'
