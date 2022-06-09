@@ -2,12 +2,11 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
 require 'cgi'
 require 'pg'
 
 def connection
-  connection = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: '')
+  PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: '')
 end
 
 get '/' do
