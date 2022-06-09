@@ -1,55 +1,17 @@
-# frozen_string_literal: true
+# メモアプリ
+メモを書き留めておける簡単なWebアプリケーションです。
+編集、削除もブラウザ上から行うことができます。
 
-require 'sinatra'
-require 'sinatra/reloader'
-require 'json'
-require 'cgi'
+# How to use
+## 初回のみ行う操作
+1. 右上の Fork ボタンを押してください。
+`#{自分のアカウント名}/sinatra-practice` が作成されます。
+2. 作業PCの任意の作業ディレクトリにて git clone してください。
+`$ git clone https://github.com/自分のアカウント名/sinatra-practice.git`
+3. `cd sinatra-practice` でカレントディレクトリを変更してください。
+4. `bundle install` を実行して環境セットアップしてください。
+ Bundlerがインストールされていない場合は`bundle install`する前に`gem install bundler`を実行してBundlerをダウンロードしてください。
 
-get '/' do
-  files = Dir.glob('memos/*').sort_by { |file| File.mtime(file) }.reverse
-  @memos = files.map do |file|
-    JSON.parse(File.read(file))
-  end
-  erb :index
-end
-
-get '/memos/new' do
-  erb :memos_new
-end
-
-post '/memos' do
-  hash = { "id": SecureRandom.uuid, "title": params['title'], "content": params['content'] }
-  File.open("memos/#{hash[:id]}.json", 'w') { |file| file.puts JSON.generate(hash) }
-  redirect '/'
-end
-
-get '/memos/:id' do
-  file = JSON.parse(File.read("memos/#{params['id']}.json"))
-  @title = file['title']
-  @content = file['content']
-  erb :memos_show
-end
-
-get '/memos/:id/edit' do
-  file = JSON.parse(File.read("memos/#{params['id']}.json"))
-  @title = file['title']
-  @content = file['content']
-  erb :memos_edit
-end
-
-patch '/memos/:id' do
-  File.open("memos/#{params['id']}.json", 'w') do |file|
-    hash = { "id": params['id'], "title": params['title'], "content": params['content'] }
-    JSON.dump(hash, file)
-  end
-  redirect "/memos/#{params['id']}"
-end
-
-delete '/memos/:id' do
-  File.delete("memos/#{params['id']}.json")
-  redirect '/'
-end
-
-not_found do
-  'ファイルが存在しません'
-end
+ ## アプリケーションを起動する際に行う操作
+1. `sinatra-practice`をカレントディレクトリにした状態で`bundle exec ruby app.rb`を実行します。
+2. お使いのブラウザで`http://localhost:4567/`にアクセスすると、メモアプリを使うことができます。
