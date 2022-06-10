@@ -5,13 +5,11 @@ require 'sinatra/reloader'
 require 'cgi'
 require 'pg'
 
-def connection
-  PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: '')
-end
+CONNECTION = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memos', port: '5432', password: '')
 
 get '/' do
-  connection
-  @memos = connection.exec('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }.reverse
+  @memos = CONNECTION.exec_params('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }.reverse
+
   erb :index
 end
 
@@ -20,42 +18,42 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  connection
-  connection.exec("INSERT INTO Memo(memo_id, memo_title, memo_content) VALUES ('#{SecureRandom.uuid}', '#{params['title']}', '#{params['content']}')")
+  CONNECTION.exec('INSERT INTO Memo(memo_id, memo_title, memo_content) VALUES($1, $2, $3)',
+                  ["#{SecureRandom.uuid}", "#{params['title']}", "#{params['content']}"])
+
   redirect '/'
 end
 
 get '/memos/:id' do
-  connection
-  connection.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
+  CONNECTION.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
     result.each do |row|
       @title = (row['memo_title']).to_s
       @content = (row['memo_content']).to_s
     end
   end
+
   erb :memos_show
 end
 
 get '/memos/:id/edit' do
-  connection
-  connection.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
+  CONNECTION.exec("SELECT memo_title, memo_content FROM Memo WHERE memo_id = '#{params[:id]}'") do |result|
     result.each do |row|
       @title = (row['memo_title']).to_s
       @content = (row['memo_content']).to_s
     end
   end
+
   erb :memos_edit
 end
 
 patch '/memos/:id' do
-  connection
-  connection.exec("UPDATE Memo SET memo_title = '#{params['title']}', memo_content = '#{params['content']}' WHERE memo_id = '#{params[:id]}'")
+  CONNECTION.exec("UPDATE Memo SET memo_title = $1, memo_content = $2 WHERE memo_id = '#{params[:id]}'", ["#{params['title']}", "#{params['content']}"])
+
   redirect "/memos/#{params['id']}"
 end
 
 delete '/memos/:id' do
-  connection
-  connection.exec("DELETE FROM Memo WHERE memo_id = '#{params[:id]}'")
+  CONNECTION.exec("DELETE FROM Memo WHERE memo_id = '#{params[:id]}'")
   redirect '/'
 end
 
