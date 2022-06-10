@@ -9,7 +9,6 @@ CONNECTION = PG.connect(host: '192.168.0.18', user: 'pachikuriii', dbname: 'memo
 
 get '/' do
   @memos = CONNECTION.exec_params('SELECT memo_id, memo_title, memo_content FROM Memo').map { |result| result }.reverse
-
   erb :index
 end
 
@@ -19,8 +18,7 @@ end
 
 post '/memos' do
   CONNECTION.exec('INSERT INTO Memo(memo_id, memo_title, memo_content) VALUES($1, $2, $3)',
-                  ["#{SecureRandom.uuid}", "#{params['title']}", "#{params['content']}"])
-
+                  [SecureRandom.uuid.to_s, params['title'].to_s, params['content'].to_s])
   redirect '/'
 end
 
@@ -31,7 +29,6 @@ get '/memos/:id' do
       @content = (row['memo_content']).to_s
     end
   end
-
   erb :memos_show
 end
 
@@ -42,13 +39,11 @@ get '/memos/:id/edit' do
       @content = (row['memo_content']).to_s
     end
   end
-
   erb :memos_edit
 end
 
 patch '/memos/:id' do
-  CONNECTION.exec("UPDATE Memo SET memo_title = $1, memo_content = $2 WHERE memo_id = '#{params[:id]}'", ["#{params['title']}", "#{params['content']}"])
-
+  CONNECTION.exec("UPDATE Memo SET memo_title = $1, memo_content = $2 WHERE memo_id = '#{params[:id]}'", [params['title'].to_s, params['content'].to_s])
   redirect "/memos/#{params['id']}"
 end
 
