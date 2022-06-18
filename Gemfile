@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv-rails', groups: %i[development test]
 # gem "rails"
 
 gem 'cgi'
