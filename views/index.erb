@@ -1,6 +1,6 @@
 <a href="/memos/new" class="button">追加</a>
 <ul>
   <% @memos.each do |memo| %>
-  <li><a href="memos/<%= memo["memo_id"] %>"><%= CGI.escapeHTML(memo["memo_title"]) %></a></li>
+  <li><a href="memos/<%= memo["uuid"] %>"><%= CGI.escapeHTML(memo["title"]) %></a></li>
   <% end %>
 </ul>
