@@ -24,7 +24,7 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  CONNECTION.exec("SELECT title, content FROM Memos WHERE uuid = '#{params[:id]}'") do |result|
+  CONNECTION.exec('SELECT title, content FROM Memos WHERE uuid = $1', [params['id']]) do |result|
     result.each do |row|
       @title = (row['title'])
       @content = (row['content'])
@@ -34,7 +34,7 @@ get '/memos/:id' do
 end
 
 get '/memos/:id/edit' do
-  CONNECTION.exec("SELECT title, content FROM Memos WHERE uuid = '#{params[:id]}'") do |result|
+  CONNECTION.exec('SELECT title, content FROM Memos WHERE uuid = $1', [params['id']]) do |result|
     result.each do |row|
       @title = (row['title'])
       @content = (row['content'])
@@ -44,12 +44,12 @@ get '/memos/:id/edit' do
 end
 
 patch '/memos/:id' do
-  CONNECTION.exec("UPDATE Memos SET title = $1, content = $2 WHERE uuid = '#{params[:id]}'", [params['title'].to_s, params['content'].to_s])
+  CONNECTION.exec('UPDATE Memos SET uuid = $1, title = $2, content = $3 WHERE uuid = $1', [params[:id], params['title'], params['content']])
   redirect "/memos/#{params['id']}"
 end
 
 delete '/memos/:id' do
-  CONNECTION.exec("DELETE FROM Memos WHERE uuid = '#{params[:id]}'")
+  CONNECTION.exec('DELETE FROM Memos WHERE uuid = $1', [params['id']])
   redirect '/'
 end
 
