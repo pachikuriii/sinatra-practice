@@ -2,10 +2,11 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv-rails', groups: %i[development test]
 # gem "rails"
 
 gem 'cgi'
-gem 'json'
+gem 'pg'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'webrick'
